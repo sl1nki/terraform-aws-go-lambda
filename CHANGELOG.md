@@ -34,5 +34,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Input validation for all constrained variables
 - Secure build script with proper error handling and quoting
 
-[Unreleased]: https://github.com/OWNER/terraform-aws-go-lambda/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/OWNER/terraform-aws-go-lambda/releases/tag/v1.0.0
+[Unreleased]: https://github.com/sl1nki/terraform-aws-go-lambda/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/sl1nki/terraform-aws-go-lambda/releases/tag/v1.0.0

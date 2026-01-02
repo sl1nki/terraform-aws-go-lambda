@@ -1,10 +1,10 @@
-See [CHANGELOG.md](https://github.com/OWNER/terraform-aws-go-lambda/blob/main/CHANGELOG.md) for detailed release notes.
+See [CHANGELOG.md](https://github.com/sl1nki/terraform-aws-go-lambda/blob/main/CHANGELOG.md) for detailed release notes.
 
 ## Installation
 
 ```hcl
 module "go_lambda" {
-  source = "git::https://github.com/OWNER/terraform-aws-go-lambda.git?ref=VERSION"
+  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=VERSION"
 
   prefix       = "myapp"
   name         = "handler"

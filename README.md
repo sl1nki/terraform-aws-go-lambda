@@ -29,7 +29,7 @@ Reusable OpenTofu/Terraform module for deploying Go Lambda functions on AWS with
 
 ```hcl
 module "lambda_orders" {
-  source = "git::https://github.com/OWNER/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
 
   prefix       = "myproject"
   name         = "orders"
@@ -51,7 +51,7 @@ module "lambda_orders" {
 
 ```hcl
 module "lambda_secure" {
-  source = "git::https://github.com/OWNER/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
 
   prefix       = "myproject"
   name         = "secure-api"
@@ -86,7 +86,7 @@ module "lambda_secure" {
 
 ```hcl
 module "my_lambda" {
-  source = "git::https://github.com/OWNER/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
 
   function_name = "${var.env}-my-function"
   iam_role_arn  = aws_iam_role.lambda_exec.arn
