@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-01-02
+
+### Changed
+
+- Updated documentation to use Terraform Registry source format
+- Added Terraform Registry badge to README
+
 ## [1.1.0] - 2026-01-02
 
 ### Added
@@ -55,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Input validation for all constrained variables
 - Secure build script with proper error handling and quoting
 
-[Unreleased]: https://github.com/sl1nki/terraform-aws-go-lambda/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/sl1nki/terraform-aws-go-lambda/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/sl1nki/terraform-aws-go-lambda/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/sl1nki/terraform-aws-go-lambda/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/sl1nki/terraform-aws-go-lambda/releases/tag/v1.0.0
