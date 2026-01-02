@@ -8,7 +8,8 @@
 
 locals {
   # Determine the function name - use function_name if provided, otherwise prefix-name
-  lambda_function_name = var.function_name != null ? var.function_name : "${var.prefix}-${var.name}"
+  # coalesce satisfies TFLint static analysis; "x" is never used when function_name is provided
+  lambda_function_name = var.function_name != null ? var.function_name : "${coalesce(var.prefix, "x")}-${coalesce(var.name, "x")}"
 
   # Map AWS architecture to Go GOARCH
   goarch = var.architecture == "arm64" ? "arm64" : "amd64"
