@@ -4,6 +4,9 @@ resource "aws_iam_role" "lambda" {
   count = var.iam_role_arn == null ? 1 : 0
   name  = "${var.prefix}-${var.name}-lambda"
 
+  # Security: Permission boundary for privilege escalation prevention
+  permissions_boundary = var.permission_boundary_arn
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -28,6 +31,20 @@ resource "aws_iam_role_policy_attachment" "lambda_basic" {
   count      = var.iam_role_arn == null ? 1 : 0
   role       = aws_iam_role.lambda[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# VPC execution role (required when Lambda is deployed in VPC)
+resource "aws_iam_role_policy_attachment" "lambda_vpc" {
+  count      = var.iam_role_arn == null && length(var.vpc_subnet_ids) > 0 ? 1 : 0
+  role       = aws_iam_role.lambda[0].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
+# X-Ray tracing role (required when X-Ray tracing is enabled)
+resource "aws_iam_role_policy_attachment" "lambda_xray" {
+  count      = var.iam_role_arn == null && var.enable_xray_tracing ? 1 : 0
+  role       = aws_iam_role.lambda[0].name
+  policy_arn = "arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess"
 }
 
 # Additional policy attachments
