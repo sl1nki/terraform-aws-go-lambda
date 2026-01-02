@@ -1,6 +1,7 @@
 # terraform-aws-go-lambda
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Terraform Registry](https://img.shields.io/badge/Terraform%20Registry-sl1nki%2Fgo--lambda%2Faws-blue)](https://registry.terraform.io/modules/sl1nki/go-lambda/aws)
 
 Reusable OpenTofu/Terraform module for deploying Go Lambda functions on AWS with production-ready security features.
 
@@ -29,7 +30,8 @@ Reusable OpenTofu/Terraform module for deploying Go Lambda functions on AWS with
 
 ```hcl
 module "lambda_orders" {
-  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source  = "sl1nki/go-lambda/aws"
+  version = "~> 1.1"
 
   prefix       = "myproject"
   name         = "orders"
@@ -51,7 +53,8 @@ module "lambda_orders" {
 
 ```hcl
 module "lambda_secure" {
-  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source  = "sl1nki/go-lambda/aws"
+  version = "~> 1.1"
 
   prefix       = "myproject"
   name         = "secure-api"
@@ -86,7 +89,8 @@ module "lambda_secure" {
 
 ```hcl
 module "my_lambda" {
-  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source  = "sl1nki/go-lambda/aws"
+  version = "~> 1.1"
 
   function_name = "${var.env}-my-function"
   iam_role_arn  = aws_iam_role.lambda_exec.arn

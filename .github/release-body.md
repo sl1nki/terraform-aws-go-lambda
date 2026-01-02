@@ -2,14 +2,27 @@ See [CHANGELOG.md](https://github.com/sl1nki/terraform-aws-go-lambda/blob/main/C
 
 ## Installation
 
+**Terraform Registry** (recommended):
+
 ```hcl
 module "go_lambda" {
-  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=VERSION"
+  source  = "sl1nki/go-lambda/aws"
+  version = "~> 1.1"
 
   prefix       = "myapp"
   name         = "handler"
   source_path  = "cmd/handler"
   project_root = path.root
   environment  = "production"
+}
+```
+
+**Direct from GitHub**:
+
+```hcl
+module "go_lambda" {
+  source = "git::https://github.com/sl1nki/terraform-aws-go-lambda.git?ref=VERSION"
+
+  # ...
 }
 ```
