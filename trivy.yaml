@@ -1,0 +1,18 @@
+# Trivy configuration for security scanning
+# https://aquasecurity.github.io/trivy/
+
+severity:
+  - HIGH
+  - CRITICAL
+
+scan:
+  scanners:
+    - misconfig
+
+misconfiguration:
+  # Terraform-specific settings
+  terraform:
+    exclude-downloaded-modules: true
+
+# Ignore specific findings if needed (with justification)
+# ignorefile: .trivyignore

@@ -1,0 +1,65 @@
+# Lefthook configuration for pre-commit hooks
+# Install: https://github.com/evilmartians/lefthook
+#
+# Quick setup:
+#   brew install lefthook    # or: go install github.com/evilmartians/lefthook@latest
+#   lefthook install
+#
+# Optional tools for full functionality:
+#   brew install tflint opentofu trivy terraform-docs
+
+pre-commit:
+  parallel: true
+  commands:
+    fmt-check:
+      glob: "*.tf"
+      run: tofu fmt -check -recursive
+      fail_text: "Terraform files not formatted. Run 'tofu fmt -recursive'"
+
+    validate:
+      glob: "*.tf"
+      run: |
+        tofu init -backend=false -input=false > /dev/null 2>&1
+        tofu validate
+      fail_text: "Terraform validation failed"
+
+    tflint:
+      glob: "*.tf"
+      run: |
+        if command -v tflint &> /dev/null; then
+          tflint --init > /dev/null 2>&1
+          tflint --recursive --format compact
+        else
+          echo "tflint not installed, skipping (install: brew install tflint)"
+        fi
+      fail_text: "TFLint found issues"
+
+    security:
+      glob: "*.tf"
+      run: |
+        if command -v trivy &> /dev/null; then
+          trivy config --severity HIGH,CRITICAL --exit-code 1 .
+        else
+          echo "trivy not installed, skipping (install: brew install trivy)"
+        fi
+      fail_text: "Security scan found issues"
+
+    docs:
+      glob: "{*.tf,README.md}"
+      run: |
+        if command -v terraform-docs &> /dev/null; then
+          terraform-docs . --output-check
+        else
+          echo "terraform-docs not installed, skipping (install: brew install terraform-docs)"
+        fi
+      fail_text: "README.md is out of date. Run 'terraform-docs .'"
+
+pre-push:
+  commands:
+    validate-examples:
+      run: |
+        for dir in examples/*/; do
+          echo "Validating $dir"
+          (cd "$dir" && tofu init -backend=false -input=false > /dev/null 2>&1 && tofu validate) || exit 1
+        done
+      fail_text: "Example validation failed"
