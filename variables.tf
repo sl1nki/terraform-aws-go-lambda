@@ -1,11 +1,25 @@
 variable "prefix" {
-  description = "Project prefix for resource naming (e.g., 'myproject')"
+  description = "Project prefix for resource naming (e.g., 'myproject'). Required if function_name not provided."
   type        = string
+  default     = null
 }
 
 variable "name" {
-  description = "Lambda function name suffix (e.g., 'orders')"
+  description = "Lambda function name suffix (e.g., 'orders'). Required if function_name not provided."
   type        = string
+  default     = null
+}
+
+variable "function_name" {
+  description = "Full function name. If provided, prefix and name are ignored."
+  type        = string
+  default     = null
+}
+
+variable "iam_role_arn" {
+  description = "IAM role ARN for the Lambda. If provided, no IAM role is created."
+  type        = string
+  default     = null
 }
 
 variable "source_path" {
@@ -25,8 +39,9 @@ variable "src_root" {
 }
 
 variable "environment" {
-  description = "Environment tag (e.g., 'production', 'staging')"
+  description = "Environment tag (e.g., 'production', 'staging'). Required when using prefix+name."
   type        = string
+  default     = null
 }
 
 variable "memory_size" {

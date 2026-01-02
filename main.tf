@@ -7,6 +7,9 @@
 # - Lambda function configuration
 
 locals {
+  # Determine the function name - use function_name if provided, otherwise prefix-name
+  lambda_function_name = var.function_name != null ? var.function_name : "${var.prefix}-${var.name}"
+
   # Map AWS architecture to Go GOARCH
   goarch = var.architecture == "arm64" ? "arm64" : "amd64"
 
@@ -34,8 +37,11 @@ locals {
   ]))
 
   # Build paths - isolated per lambda to avoid parallel build collisions
-  build_dir = "/tmp/${var.prefix}-${var.name}"
+  build_dir = "/tmp/${local.lambda_function_name}"
   zip_path  = "${local.build_dir}/lambda.zip"
+
+  # IAM role ARN - use provided or created
+  lambda_role_arn = var.iam_role_arn != null ? var.iam_role_arn : aws_iam_role.lambda[0].arn
 }
 
 # Build the Lambda zip
@@ -54,19 +60,19 @@ resource "terraform_data" "lambda_zip" {
 
 # CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "lambda" {
-  name              = "/aws/lambda/${var.prefix}-${var.name}"
+  name              = "/aws/lambda/${local.lambda_function_name}"
   retention_in_days = var.log_retention_days
 
-  tags = {
+  tags = var.prefix != null ? {
     Name        = "${var.prefix} ${var.name} Lambda Logs"
     Environment = var.environment
-  }
+  } : {}
 }
 
 # Lambda Function
 resource "aws_lambda_function" "this" {
-  function_name = "${var.prefix}-${var.name}"
-  role          = aws_iam_role.lambda.arn
+  function_name = local.lambda_function_name
+  role          = local.lambda_role_arn
   handler       = "bootstrap"
   runtime       = "provided.al2023"
   architectures = [var.architecture]
@@ -86,12 +92,11 @@ resource "aws_lambda_function" "this" {
 
   depends_on = [
     aws_cloudwatch_log_group.lambda,
-    aws_iam_role_policy_attachment.lambda_basic,
     terraform_data.lambda_zip,
   ]
 
-  tags = {
+  tags = var.prefix != null ? {
     Name        = "${var.prefix} ${var.name}"
     Environment = var.environment
-  }
+  } : {}
 }

@@ -7,9 +7,10 @@ Reusable OpenTofu/Terraform module for deploying Go Lambda functions on AWS.
 - Cross-compilation for Linux (arm64 by default)
 - Source hash computation for automatic change detection
 - CloudWatch log group with configurable retention
-- IAM role with basic execution policy
+- Optional IAM role creation with basic execution policy
 - Support for additional IAM policies and inline policies
 - Environment variables support
+- Flexible naming: prefix+name or full function_name
 
 ## Requirements
 
@@ -20,9 +21,11 @@ Reusable OpenTofu/Terraform module for deploying Go Lambda functions on AWS.
 
 ## Usage
 
+### With IAM Role Creation (prefix + name)
+
 ```hcl
 module "lambda_orders" {
-  source = "git::ssh://git@github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.0.0"
+  source = "git::ssh://git@github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.1.0"
 
   prefix       = "myproject"
   name         = "orders"
@@ -51,16 +54,36 @@ module "lambda_orders" {
 }
 ```
 
+### With External IAM Role (function_name)
+
+```hcl
+module "my_lambda" {
+  source = "git::ssh://git@github.com/sl1nki/terraform-aws-go-lambda.git?ref=v1.1.0"
+
+  function_name = "${var.env}-my-function"
+  iam_role_arn  = aws_iam_role.lambda_exec.arn
+  source_path   = "api/my-function"
+  project_root  = path.module
+  src_root      = "../backend"
+
+  environment_variables = {
+    LOG_LEVEL = "info"
+  }
+}
+```
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| prefix | Project prefix for resource naming | `string` | - | yes |
-| name | Lambda function name suffix | `string` | - | yes |
+| prefix | Project prefix for resource naming | `string` | `null` | no* |
+| name | Lambda function name suffix | `string` | `null` | no* |
+| function_name | Full function name (overrides prefix+name) | `string` | `null` | no* |
+| iam_role_arn | External IAM role ARN (skips role creation) | `string` | `null` | no |
 | source_path | Path to Go source relative to src_root | `string` | - | yes |
 | project_root | Project root path (absolute) | `string` | - | yes |
 | src_root | Root directory containing Go source | `string` | `"."` | no |
-| environment | Environment tag | `string` | - | yes |
+| environment | Environment tag | `string` | - | yes** |
 | memory_size | Lambda memory in MB | `number` | `128` | no |
 | timeout | Lambda timeout in seconds | `number` | `10` | no |
 | architecture | CPU architecture (arm64 or x86_64) | `string` | `"arm64"` | no |
@@ -70,6 +93,9 @@ module "lambda_orders" {
 | environment_variables | Environment variables for Lambda | `map(string)` | `{}` | no |
 | log_retention_days | CloudWatch log retention in days | `number` | `14` | no |
 
+\* Either `function_name` OR both `prefix` and `name` must be provided.
+\*\* Required when using prefix+name pattern for resource tagging.
+
 ## Outputs
 
 | Name | Description |
@@ -77,8 +103,10 @@ module "lambda_orders" {
 | function_name | Lambda function name |
 | function_arn | Lambda function ARN |
 | invoke_arn | Lambda invoke ARN for API Gateway |
-| iam_role_arn | IAM role ARN |
-| iam_role_name | IAM role name |
+| iam_role_arn | IAM role ARN (null if external role provided) |
+| iam_role_name | IAM role name (null if external role provided) |
+| lambda_arn | Alias for function_arn |
+| lambda_name | Alias for function_name |
 
 ## Architecture
 
