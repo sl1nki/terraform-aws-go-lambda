@@ -18,9 +18,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_caller_identity" "current" {}
-data "aws_region" "current" {}
-
 # DynamoDB table for the Lambda to access
 resource "aws_dynamodb_table" "orders" {
   name         = "example-orders"

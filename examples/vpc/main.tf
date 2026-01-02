@@ -36,7 +36,9 @@ resource "aws_security_group" "lambda" {
   description = "Security group for Lambda function"
   vpc_id      = data.aws_vpc.main.id
 
-  # Allow all outbound traffic
+  # Allow all outbound traffic - required for Lambda to reach AWS services
+  # In production, consider restricting to specific CIDR blocks or using VPC endpoints
+  # trivy:ignore:AVD-AWS-0104 Egress to 0.0.0.0/0 is intentional for this example
   egress {
     from_port   = 0
     to_port     = 0
