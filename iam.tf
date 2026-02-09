@@ -55,10 +55,12 @@ resource "aws_iam_role_policy_attachment" "lambda_xray" {
 }
 
 # Additional policy attachments
+# Uses count instead of for_each so that unknown ARNs (e.g. a policy created
+# in the same apply) don't block planning. length() is plan-time-safe.
 resource "aws_iam_role_policy_attachment" "additional" {
-  for_each   = var.iam_role_arn == null ? toset(var.additional_policy_arns) : toset([])
+  count      = var.iam_role_arn == null ? length(var.additional_policy_arns) : 0
   role       = aws_iam_role.lambda[0].name
-  policy_arn = each.value
+  policy_arn = var.additional_policy_arns[count.index]
 }
 
 # Optional inline policy
