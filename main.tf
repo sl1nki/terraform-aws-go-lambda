@@ -51,7 +51,7 @@ resource "terraform_data" "lambda_zip" {
 
   provisioner "local-exec" {
     command = <<-EOF
-      set -euo pipefail
+      set -eu
       mkdir -p "${local.build_dir}"
       cd "${local.go_src_path}"
       GOOS=linux GOARCH="${local.goarch}" go build -tags lambda.norpc -o "${local.build_dir}/bootstrap" "./${var.source_path}/"
