@@ -46,7 +46,7 @@ jobs:
         if: steps.retries.outputs.skip != 'true'
         id: diff
         run: |
-          if git diff --quiet README.md; then
+          if git diff --staged --quiet README.md; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
