@@ -42,6 +42,10 @@ jobs:
           output-method: inject
           fail-on-diff: false
 
+      - name: Fix ownership
+        if: steps.retries.outputs.skip != 'true'
+        run: sudo chown -R "$(id -u):$(id -g)" .
+
       - name: Check for diff
         if: steps.retries.outputs.skip != 'true'
         id: diff
