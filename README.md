@@ -112,7 +112,7 @@ See the [examples](./examples/) directory for more complete examples.
 | Name | Version |
 |------|---------|
 | terraform | >= 1.0 |
-| aws | >= 5.0, < 6.35 |
+| aws | >= 5.0, < 6.36 |
 
 ## Inputs
 
