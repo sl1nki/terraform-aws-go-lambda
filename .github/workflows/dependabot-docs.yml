@@ -21,10 +21,13 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 10
 
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+
       - name: Check retry limit
         id: retries
         run: |
-          count=$(git log --oneline --grep='\[dependabot skip\] docs: regenerate' | wc -l | tr -d ' ')
+          count=$(git log --oneline "origin/${{ github.event.pull_request.base.ref }}..HEAD" --grep='\[dependabot skip\] docs: regenerate' | wc -l | tr -d ' ')
           echo "count=$count" >> "$GITHUB_OUTPUT"
           if [ "$count" -ge 2 ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
