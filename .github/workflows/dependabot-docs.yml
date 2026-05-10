@@ -78,3 +78,12 @@ jobs:
           git add README.md
           git commit -m "[dependabot skip] docs: regenerate README.md"
           git push
+
+      - name: Re-run CI on the new commit
+        if: steps.retries.outputs.skip != 'true' && steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run ci.yml \
+            --repo "${{ github.repository }}" \
+            --ref "${{ github.event.pull_request.head.ref }}"
