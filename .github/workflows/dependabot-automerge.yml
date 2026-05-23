@@ -1,0 +1,41 @@
+name: Dependabot Auto-Merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable-automerge:
+    if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable squash auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: gh pr merge --auto --squash --repo "${{ github.repository }}" "$PR_NUMBER"
+
+  update-behind-prs:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update open dependabot PRs that are behind main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list \
+            --repo "${{ github.repository }}" \
+            --author "app/dependabot" \
+            --state open \
+            --json number,mergeStateStatus \
+            --jq '.[] | select(.mergeStateStatus == "BEHIND") | .number' \
+          | while read -r n; do
+              echo "Updating PR #$n"
+              gh api -X PUT "repos/${{ github.repository }}/pulls/$n/update-branch" || true
+            done
