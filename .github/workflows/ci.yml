@@ -77,7 +77,15 @@ jobs:
           working-dir: .
           output-file: README.md
           output-method: inject
-          fail-on-diff: true
+          # Docs are generated in-place here. For human-authored PRs the check
+          # fails on a stale README (matching the lefthook pre-commit gate). For
+          # Dependabot PRs it does not fail: Dependabot can't run the local
+          # lefthook hook, and a follow-up bot commit to refresh the README is
+          # pushed with a token that does not re-trigger required checks, which
+          # left the PR's head SHA permanently uncovered and BLOCKED. The README
+          # requirements table is refreshed on the next human commit (enforced
+          # by lefthook). See removed dependabot-docs.yml workflow.
+          fail-on-diff: ${{ github.actor != 'dependabot[bot]' }}
 
   security:
     name: Security Scan
