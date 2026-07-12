@@ -60,6 +60,10 @@ jobs:
 
       - name: Initialize TFLint
         run: tflint --init
+        env:
+          # Authenticate plugin downloads to avoid GitHub API rate limits
+          # (unauthenticated requests share the runner IP's low quota).
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Run TFLint
         run: tflint --recursive --format compact
