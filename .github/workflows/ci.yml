@@ -85,7 +85,14 @@ jobs:
           # left the PR's head SHA permanently uncovered and BLOCKED. The README
           # requirements table is refreshed on the next human commit (enforced
           # by lefthook). See removed dependabot-docs.yml workflow.
-          fail-on-diff: ${{ github.actor != 'dependabot[bot]' }}
+          #
+          # Only gate human-authored pull requests. On push to main the code is
+          # already merged, so a stale README (e.g. right after a Dependabot
+          # auto-merge) can't be fixed by failing here -- it just leaves main
+          # red until the next human commit. The push-to-main actor is the
+          # auto-merge bot, not dependabot[bot], so the actor check alone does
+          # not suppress it.
+          fail-on-diff: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
 
   security:
     name: Security Scan
